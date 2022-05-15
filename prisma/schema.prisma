@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model causes {
+  id          Int     @id @default(autoincrement())
+  spill_id    Int
+  cause       String  @db.Text
+  description String? @db.Text
+  spills      spills  @relation(fields: [spill_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "causes_ibfk_1")
+
+  @@index([spill_id], map: "spill_id")
+}
+
+model consequences {
+  id          Int     @id @default(autoincrement())
+  spill_id    Int
+  consequence String  @db.Text
+  description String? @db.Text
+  spills      spills  @relation(fields: [spill_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "consequences_ibfk_1")
+
+  @@index([spill_id], map: "spill_id")
+}
+
+model locations {
+  id          Int     @id @default(autoincrement())
+  spill_id    Int
+  location    String  @db.Text
+  coordinates String? @db.Text
+  regions     String? @db.Text
+  spills      spills  @relation(fields: [spill_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "locations_ibfk_1")
+
+  @@index([spill_id], map: "spill_id")
+}
+
+model solutions {
+  id          Int     @id @default(autoincrement())
+  spill_id    Int
+  solution    String  @db.Text
+  description String? @db.Text
+  spills      spills  @relation(fields: [spill_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "solutions_ibfk_1")
+
+  @@index([spill_id], map: "spill_id")
+}
+
+model spills {
+  id           Int            @id @default(autoincrement())
+  incident     String         @db.Text
+  date         String         @db.Text
+  causes       causes[]
+  consequences consequences[]
+  locations    locations[]
+  solutions    solutions[]
+}
